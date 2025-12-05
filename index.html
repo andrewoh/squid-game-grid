@@ -14,6 +14,16 @@
     <script type="module" src="main.js"></script>
   </head>
   <body>
+    <div id="controls">
+      <label for="photoUpload">Upload custom photos</label>
+      <input
+        id="photoUpload"
+        type="file"
+        accept="image/*"
+        multiple
+      />
+      <span class="hint">Pick one photo per participant.</span>
+    </div>
     <p id="pressAnywhereText">Press anywhere for sound effects.</p>
     <div id="screen"></div>
   </body>

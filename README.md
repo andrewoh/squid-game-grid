@@ -27,6 +27,10 @@ You may also upload a `config.json` file in the following format:
 
 Only 1 to 100 are tested.
 
+## Custom photos
+
+Use the **Upload custom photos** control in the top-left corner of the page to pick one image per participant. The game will instantly rebuild the grid using your selected images (numbers are assigned in the order you select the files).
+
 ## Handy debugging commands
 
 ```js
