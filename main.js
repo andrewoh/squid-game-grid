@@ -1,8 +1,8 @@
-import { genPlayers } from "./player.js";
+import Player, { genPlayers } from "./player.js";
 
 const CONFIG_PATH = "config.json";
 const USE_PROGRESSIVE_SQUARE = true;
-const AUTO_RUNNING = true;
+const AUTO_RUNNING = false;
 
 class Game {
     eqSet = (xs, ys) =>
@@ -14,11 +14,12 @@ class Game {
         this.screenElm = screenElm;
         this.useProgressiveSquare = useProgressiveSquare;
         this.eliminationOrder = eliminationOrder;
+        this.baseAutoRunning = autoRunning;
         this.autoRunning = autoRunning && eliminationOrder.length > 0;
         this.eliminateTimeSep = eliminateTimeSep;
 
         let playerIds = this.players.map((_, id) => id);
-        this.canEliminateAll = this.eqSet(new Set(eliminationOrder), new Set(playerIds))
+        this.canEliminateAll = this.eqSet(new Set(eliminationOrder), new Set(playerIds));
 
         this.refreshScreen();
 
@@ -26,17 +27,21 @@ class Game {
             this.resetDimensions();
         };
 
-        document.body.addEventListener("click", (e) => {
-            if (e.target !== e.currentTarget) {
-                return;
-            }
-
-            this.toggleAuto();
-        });
-
-        if (eliminationOrder.length > 0) {
+        if (this.autoRunning && eliminationOrder.length > 0) {
             this.runEliminateLoop();
         }
+    }
+
+    setPlayers(players, eliminationOrder) {
+        this.players = players;
+        this.eliminationOrder = eliminationOrder;
+
+        let playerIds = this.players.map((_, id) => id);
+        this.canEliminateAll = this.eqSet(new Set(eliminationOrder), new Set(playerIds));
+        this.autoRunning = this.baseAutoRunning && eliminationOrder.length > 0;
+
+        this.resurrectAllPlayers();
+        this.refreshScreen();
     }
 
     pauseAuto = () => {
@@ -233,10 +238,39 @@ class Game {
 
 async function main() {
     let players = await genPlayers(CONFIG_PATH);
-    let playerIds = players.map((_, id) => id);
-    let eliminationOrder = playerIds.sort(() => Math.random() - 0.5);
+    let eliminationOrder = buildEliminationOrder(players);
     let game = new Game(players, document.getElementById("screen"), USE_PROGRESSIVE_SQUARE, AUTO_RUNNING, eliminationOrder);
+    setupPhotoUpload(game);
     window.game = game;
+}
+
+function buildEliminationOrder(players) {
+    let playerIds = players.map((_, id) => id);
+    return playerIds.sort(() => Math.random() - 0.5);
+}
+
+function setupPhotoUpload(game) {
+    let uploadInput = document.getElementById("photoUpload");
+    let objectUrls = [];
+
+    if (!uploadInput) {
+        return;
+    }
+
+    uploadInput.addEventListener("change", (event) => {
+        let files = Array.from(event.target.files || []);
+
+        if (!files.length) {
+            return;
+        }
+
+        objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        objectUrls = files.map((file) => URL.createObjectURL(file));
+
+        let players = objectUrls.map((url, index) => new Player(index + 1, url));
+        let eliminationOrder = buildEliminationOrder(players);
+        game.setPlayers(players, eliminationOrder);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {

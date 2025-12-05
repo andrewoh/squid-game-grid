@@ -14,7 +14,17 @@
     <script type="module" src="main.js"></script>
   </head>
   <body>
-    <p id="pressAnywhereText">Press anywhere for sound effects.</p>
+    <div id="controls">
+      <label for="photoUpload">Upload custom photos</label>
+      <input
+        id="photoUpload"
+        type="file"
+        accept="image/*"
+        multiple
+      />
+      <span class="hint">Pick one photo per participant.</span>
+    </div>
+    <p id="pressAnywhereText">Click a participant to eliminate them.</p>
     <div id="screen"></div>
   </body>
 </html>
