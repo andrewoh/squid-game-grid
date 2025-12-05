@@ -2,7 +2,7 @@ import Player, { genPlayers } from "./player.js";
 
 const CONFIG_PATH = "config.json";
 const USE_PROGRESSIVE_SQUARE = true;
-const AUTO_RUNNING = true;
+const AUTO_RUNNING = false;
 
 class Game {
     eqSet = (xs, ys) =>
@@ -27,15 +27,7 @@ class Game {
             this.resetDimensions();
         };
 
-        document.body.addEventListener("click", (e) => {
-            if (e.target !== e.currentTarget) {
-                return;
-            }
-
-            this.toggleAuto();
-        });
-
-        if (eliminationOrder.length > 0) {
+        if (this.autoRunning && eliminationOrder.length > 0) {
             this.runEliminateLoop();
         }
     }

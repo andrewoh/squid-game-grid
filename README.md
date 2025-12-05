@@ -31,6 +31,20 @@ Only 1 to 100 are tested.
 
 Use the **Upload custom photos** control in the top-left corner of the page to pick one image per participant. The game will instantly rebuild the grid using your selected images (numbers are assigned in the order you select the files).
 
+## Testing locally
+
+Because the page fetches `config.json`, you need to serve the files over HTTP instead of opening `index.html` directly from the filesystem. A quick way to do this is with the built-in Python server:
+
+```bash
+python -m http.server 8000
+```
+
+Then visit <http://localhost:8000/> in your browser. From there you can:
+
+- Verify the default grid renders and you can manually eliminate participants by clicking squares.
+- Click the **Upload custom photos** control and select images to confirm the grid rebuilds with your files.
+- Optionally drop a `config.json` (in the format above) into the project directory and refresh to ensure the configured players load.
+
 ## Handy debugging commands
 
 ```js
